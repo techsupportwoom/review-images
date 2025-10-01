@@ -12,7 +12,6 @@
 		"jws": "^4.0.0"
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "^1.13.8",
 		"@hono/vite-build": "^1.7.0",
 		"@hono/vite-dev-server": "^0.18.3",
 		"@types/jws": "^3.2.10",
