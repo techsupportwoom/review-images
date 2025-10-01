@@ -9,7 +9,7 @@
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
-	"main": "./dist/_worker.js",
+	"pages_build_output_dir": "./dist",
 	"observability": {
 		"enabled": true
 	}

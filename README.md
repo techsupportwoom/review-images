@@ -18,6 +18,7 @@ pnpm dev
 ```
 ## needed `.env` variables
 - GOOGLE_JWT_PRIVATE_KEY
+- GOOGLE_JWT_PRIVATE_KEY_ID
 - GOOGLE_JWT_EMAIL
 
 ## deployment
