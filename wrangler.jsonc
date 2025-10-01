@@ -12,6 +12,24 @@
 	"main": "./dist/_worker.js",
 	"observability": {
 		"enabled": true
+	},
+	"env": {
+		"preview": {
+			"name": "cloudflare-worker-review-images",
+			"compatibility_date": "2025-10-01",
+			"compatibility_flags": [
+				"nodejs_compat"
+			],
+			"main": "./dist/_worker.js",
+		},
+		"production": {
+			"name": "cloudflare-worker-review-images",
+			"compatibility_date": "2025-10-01",
+			"compatibility_flags": [
+				"nodejs_compat"
+			],
+			"main": "./dist/_worker.js",
+		}
 	}
 	/**
 	 * Smart Placement
