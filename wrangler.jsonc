@@ -7,10 +7,9 @@
 	"name": "cloudflare-worker-review-images",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-10-01",
-	"assets": {
-		"binding": "ASSETS",
-		"directory": "./public"
-	},
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
 	"observability": {
 		"enabled": true
 	}
