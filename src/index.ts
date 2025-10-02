@@ -33,21 +33,26 @@ app.get("/image/:id", async (context) => {
   const iat = Math.floor(Date.now() / 1000);
   const exp = getExpirationTime(iat);
 
-  const signedJWT = await jwt.sign(
-    {
-      iss: GOOGLE_JWT_EMAIL,
-      sub: GOOGLE_JWT_EMAIL,
-      scope: "https://www.googleapis.com/auth/drive",
-      aud: "https://oauth2.googleapis.com/token",
-      exp,
-      iat,
-    },
-    GOOGLE_JWT_PRIVATE_KEY,
-    {
-      algorithm: "RS256",
-      header: jwtHeader,
-    }
-  );
+  try {
+    
+    const signedJWT = await jwt.sign(
+      {
+        iss: GOOGLE_JWT_EMAIL,
+        sub: GOOGLE_JWT_EMAIL,
+        scope: "https://www.googleapis.com/auth/drive",
+        aud: "https://oauth2.googleapis.com/token",
+        exp,
+        iat,
+      },
+      GOOGLE_JWT_PRIVATE_KEY,
+      {
+        algorithm: "RS256",
+        header: jwtHeader,
+      }
+    );
+  } catch (error) {
+    console.trace(error)
+  }
 
   const tokenUrl = new URL("https://oauth2.googleapis.com/token");
   tokenUrl.searchParams.set(
