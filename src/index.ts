@@ -33,9 +33,10 @@ app.get("/image/:id", async (context) => {
   const iat = Math.floor(Date.now() / 1000);
   const exp = getExpirationTime(iat);
 
+  let signedJWT = '';
   try {
     
-    const signedJWT = await jwt.sign(
+     signedJWT = await jwt.sign(
       {
         iss: GOOGLE_JWT_EMAIL,
         sub: GOOGLE_JWT_EMAIL,
