@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import { stream } from "hono/streaming";
-import jws from "jws";
-import type { SignOptions } from "jws";
+import jwt, { JwtHeader } from "@tsndr/cloudflare-worker-jwt";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 
@@ -26,27 +25,29 @@ app.get("/image/:id", async (context) => {
     return context.text("Server Error", 503);
 
   // https://developers.google.com/identity/protocols/oauth2/service-account#httprest
-  const jwtHeader: SignOptions["header"] = {
+  const jwtHeader = {
     alg: "RS256",
     typ: "JWT",
     kid: GOOGLE_JWT_PRIVATE_KEY_ID,
-  };
+  } satisfies JwtHeader<{kid:string}>;
   const iat = Math.floor(Date.now() / 1000);
   const exp = getExpirationTime(iat);
-  const claim = {
-    iss: GOOGLE_JWT_EMAIL,
-    sub: GOOGLE_JWT_EMAIL,
-    scope: "https://www.googleapis.com/auth/drive",
-    aud: "https://oauth2.googleapis.com/token",
-    exp,
-    iat,
-  };
 
-  const signedJWT = jws.sign({
-    header: jwtHeader,
-    payload: claim,
-    secret: GOOGLE_JWT_PRIVATE_KEY,
-  });
+  const signedJWT = await jwt.sign(
+    {
+      iss: GOOGLE_JWT_EMAIL,
+      sub: GOOGLE_JWT_EMAIL,
+      scope: "https://www.googleapis.com/auth/drive",
+      aud: "https://oauth2.googleapis.com/token",
+      exp,
+      iat,
+    },
+    GOOGLE_JWT_PRIVATE_KEY,
+    {
+      algorithm: "RS256",
+      header: jwtHeader,
+    }
+  );
 
   const tokenUrl = new URL("https://oauth2.googleapis.com/token");
   tokenUrl.searchParams.set(
@@ -65,8 +66,8 @@ app.get("/image/:id", async (context) => {
   if (!tokenResponse.ok) return context.text("Token Server Error", 503);
 
   const token = await tokenResponse.json();
-  console.log(token);
-  if (typeof token !== 'object' || !token || !('access_token' in token)) return context.text("Token Response Error", 503)
+  if (typeof token !== "object" || !token || !("access_token" in token))
+    return context.text("Token Response Error", 503);
 
   // https://www.postman.com/postman/google-api-workspace/request/lunipti/get-a-file-s-metadata-or-content-by-id?tab=overview
   const filePromise = await fetch(
