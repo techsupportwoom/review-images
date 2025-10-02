@@ -26,3 +26,7 @@ We deploy each commit to cloudflare pages
 
 - main branch: staging instace
 - production branch: production instace
+
+⚠️ when adding the `GOOGLE_JWT_PRIVATE_KEY` to cloudflare pages, you need to do the following
+1. remove the start and end of the signature marked by `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----`
+2. remove all `\n`

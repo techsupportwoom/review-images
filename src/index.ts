@@ -16,12 +16,9 @@ function byteStringToBytes(byteStr: string) {
   return bytes;
 }
 function base64StringToUint8Array(b64str: string) {
-  console.log('### b64str', b64str);
   return byteStringToBytes(atob(b64str));
 }
 function pemToBinary(pem: string) {
-  console.log('### pem', pem);
-  
   return base64StringToUint8Array(
     pem.replace(/-+(BEGIN|END).*/g, "").replace(/\s/g, "")
   );
@@ -88,10 +85,7 @@ app.get("/image/:id", async (context) => {
     },
   });
 
-  if (!tokenResponse.ok) {
-    console.log(tokenResponse.status, await tokenResponse.text());
-    return context.text("Token Server Error", 503);
-  }
+  if (!tokenResponse.ok) return context.text("Token Server Error", 503);
 
   const token = await tokenResponse.json();
   if (typeof token !== "object" || !token || !("access_token" in token))
