@@ -69,7 +69,10 @@ app.get("/image/:id", async (context) => {
     },
   });
 
-  if (!tokenResponse.ok) return context.text("Token Server Error", 503);
+  if (!tokenResponse.ok) {
+    console.log(tokenResponse.status,await tokenResponse.text());
+    return context.text("Token Server Error", 503);
+  }
 
   const token = await tokenResponse.json();
   if (typeof token !== "object" || !token || !("access_token" in token))
