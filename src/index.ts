@@ -16,9 +16,12 @@ function byteStringToBytes(byteStr: string) {
   return bytes;
 }
 function base64StringToUint8Array(b64str: string) {
+  console.log('### b64str', b64str);
   return byteStringToBytes(atob(b64str));
 }
 function pemToBinary(pem: string) {
+  console.log('### pem', pem);
+  
   return base64StringToUint8Array(
     pem.replace(/-+(BEGIN|END).*/g, "").replace(/\s/g, "")
   );
