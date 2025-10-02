@@ -8,6 +8,21 @@ function getExpirationTime(iat: number) {
   const exp = iat + 3600; // 3600 seconds = 1 hour
   return exp;
 }
+function byteStringToBytes(byteStr: string) {
+  let bytes = new Uint8Array(byteStr.length);
+  for (let i = 0; i < byteStr.length; i++) {
+    bytes[i] = byteStr.charCodeAt(i);
+  }
+  return bytes;
+}
+function base64StringToUint8Array(b64str: string) {
+  return byteStringToBytes(atob(b64str));
+}
+function pemToBinary(pem: string) {
+  return base64StringToUint8Array(
+    pem.replace(/-+(BEGIN|END).*/g, "").replace(/\s/g, "")
+  );
+}
 
 app.get("/image/:id", async (context) => {
   const fileId = context.req.param("id");
@@ -29,31 +44,32 @@ app.get("/image/:id", async (context) => {
     alg: "RS256",
     typ: "JWT",
     kid: GOOGLE_JWT_PRIVATE_KEY_ID,
-  } satisfies JwtHeader<{kid:string}>;
+  } satisfies JwtHeader<{ kid: string }>;
   const iat = Math.floor(Date.now() / 1000);
   const exp = getExpirationTime(iat);
 
-  let signedJWT = '';
-  try {
-    
-     signedJWT = await jwt.sign(
-      {
-        iss: GOOGLE_JWT_EMAIL,
-        sub: GOOGLE_JWT_EMAIL,
-        scope: "https://www.googleapis.com/auth/drive",
-        aud: "https://oauth2.googleapis.com/token",
-        exp,
-        iat,
-      },
-      GOOGLE_JWT_PRIVATE_KEY,
-      {
-        algorithm: "RS256",
-        header: jwtHeader,
-      }
-    );
-  } catch (error) {
-    console.log(error)
-  }
+  const secret = await crypto.subtle.importKey(
+    "pkcs8",
+    pemToBinary(GOOGLE_JWT_PRIVATE_KEY),
+    { name: "RSASSA-PKCS1-v1_5", hash: { name: "SHA-256" } },
+    true,
+    ["sign"]
+  );
+  const signedJWT = await jwt.sign(
+    {
+      iss: GOOGLE_JWT_EMAIL,
+      sub: GOOGLE_JWT_EMAIL,
+      scope: "https://www.googleapis.com/auth/drive",
+      aud: "https://oauth2.googleapis.com/token",
+      exp,
+      iat,
+    },
+    secret,
+    {
+      algorithm: "RS256",
+      header: jwtHeader,
+    }
+  );
 
   const tokenUrl = new URL("https://oauth2.googleapis.com/token");
   tokenUrl.searchParams.set(
@@ -70,7 +86,7 @@ app.get("/image/:id", async (context) => {
   });
 
   if (!tokenResponse.ok) {
-    console.log(tokenResponse.status,await tokenResponse.text());
+    console.log(tokenResponse.status, await tokenResponse.text());
     return context.text("Token Server Error", 503);
   }
 
