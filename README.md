@@ -30,3 +30,8 @@ We deploy each commit to cloudflare pages (https://dash.cloudflare.com/2f10dc1d1
 ⚠️ when adding the `GOOGLE_JWT_PRIVATE_KEY` to cloudflare pages, you need to do the following
 1. remove the start and end of the signature marked by `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----`
 2. remove all `\n`
+
+## branches and urls
+- production: review-img.woom.com
+- staging: review-img-staging.woom.com
+- feature: see cloudflare feature branch
