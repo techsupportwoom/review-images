@@ -22,7 +22,7 @@ pnpm dev
 - GOOGLE_JWT_EMAIL
 
 ## deployment
-We deploy each commit to cloudflare pages
+We deploy each commit to cloudflare pages (https://dash.cloudflare.com/2f10dc1d109439e83c89b6c9e9ad51de/pages/view/review-images)
 
 - main branch: staging instace
 - production branch: production instace
