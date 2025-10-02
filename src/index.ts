@@ -52,7 +52,7 @@ app.get("/image/:id", async (context) => {
       }
     );
   } catch (error) {
-    console.trace(error)
+    console.log(error)
   }
 
   const tokenUrl = new URL("https://oauth2.googleapis.com/token");
