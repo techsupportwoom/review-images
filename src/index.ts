@@ -103,6 +103,13 @@ app.get("/image/:id", async (context) => {
 
   if (!filePromise.ok) return context.text("File not found", 404);
 
+  const contentType = filePromise.headers.get("content-type");
+  if (contentType) {
+    context.header("content-type", contentType);
+    // Set cache header for seven days
+    context.header('Cache-Control', `maxage=504000, public`);
+  }
+
   const fileStream = filePromise.body;
   if (!fileStream) return context.text("File not found", 404);
 
